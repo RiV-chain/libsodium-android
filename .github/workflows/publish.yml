@@ -1,0 +1,16 @@
+name: Publish
+on:
+  workflow_dispatch:
+jobs:
+  Publish:
+    name: GitHub maven repo publication
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub maven repo action
+        uses: RiV-chain/github-publish-maven-action@main
+        with:
+          gh_pat: ${{ secrets.MAVEN_PAT }}
+          artifact_repo: 'RiV-chain/artifact'
+          gradle_file_path: './gradlew'
+          java_version: '21'
+          distribution: 'temurin'
