@@ -8,30 +8,30 @@
 
 package org.rivchain.libsodium_android;
 
-import com.goterl.lazysodium.LazySodium;
-import com.goterl.lazysodium.interfaces.MessageEncoder;
-import com.goterl.lazysodium.utils.HexMessageEncoder;
+import org.rivchain.libsodium_java.LibSodium;
+import org.rivchain.libsodium_java.interfaces.MessageEncoder;
+import org.rivchain.libsodium_java.utils.HexMessageEncoder;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-public class LazySodiumAndroid extends LazySodium {
+public class LibSodiumAndroid extends LibSodium {
 
     private final SodiumAndroid sodium;
 
-    public LazySodiumAndroid(SodiumAndroid sodium) {
+    public LibSodiumAndroid(SodiumAndroid sodium) {
         this(sodium, StandardCharsets.UTF_8, new HexMessageEncoder());
     }
 
-    public LazySodiumAndroid(SodiumAndroid sodium, Charset charset) {
+    public LibSodiumAndroid(SodiumAndroid sodium, Charset charset) {
         this(sodium, charset, new HexMessageEncoder());
     }
 
-    public LazySodiumAndroid(SodiumAndroid sodium, MessageEncoder messageEncoder) {
+    public LibSodiumAndroid(SodiumAndroid sodium, MessageEncoder messageEncoder) {
         this(sodium, StandardCharsets.UTF_8, messageEncoder);
     }
 
-    public LazySodiumAndroid(SodiumAndroid sodium, Charset charset, MessageEncoder messageEncoder) {
+    public LibSodiumAndroid(SodiumAndroid sodium, Charset charset, MessageEncoder messageEncoder) {
         super(charset, messageEncoder);
         this.sodium = sodium;
     }

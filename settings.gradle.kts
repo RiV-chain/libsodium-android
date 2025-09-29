@@ -26,3 +26,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "libsodium-android"
 include(":libsodium-android")
+include(":libsodium-java")
