@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    grease(project(":libsodium-java"))
+    grease("org.rivchain:libsodium-java:2.0.0")
     grease("org.libsodium:libsodium:1.0.21.0@aar")
     implementation("net.java.dev.jna:jna:5.18.0@aar")
     testImplementation(libs.junit)
