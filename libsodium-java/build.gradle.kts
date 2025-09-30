@@ -28,55 +28,77 @@ dependencies {
 // Task to extract native libraries from AAR and organize them in proper structure
 val extractAar by tasks.registering {
     doLast {
-        val aarFiles = configurations["nativeLibs"].resolve()
-        if (aarFiles.isNotEmpty()) {
-            val aarFile = aarFiles.first()
-            val extractedDir = layout.buildDirectory.dir("extracted-aar").get().asFile
-            extractedDir.mkdirs()
+        try {
+            val aarFiles = configurations["nativeLibs"].resolve()
+            if (aarFiles.isNotEmpty()) {
+                val aarFile = aarFiles.first()
+                val extractedDir = layout.buildDirectory.dir("extracted-aar").get().asFile
+                extractedDir.mkdirs()
 
-            // Extract the AAR file
-            copy {
-                from(zipTree(aarFile))
-                into(extractedDir)
-            }
+                // Extract the AAR file
+                copy {
+                    from(zipTree(aarFile))
+                    into(extractedDir)
+                }
 
-            // Create the proper directory structure in test resources
-            val testResourcesDir = File(sourceSets["test"].resources.srcDirs.first().toString())
-            testResourcesDir.mkdirs()
+                // Get the test resources directory
+                val testResourcesDir = File(sourceSets["test"].resources.srcDirs.first().toString())
+                testResourcesDir.mkdirs()
 
-            // Map AAR JNI folders to expected resource structure
-            val jniDir = File(extractedDir, "jni")
-            if (jniDir.exists()) {
-                jniDir.listFiles()?.forEach { abiDir ->
-                    if (abiDir.isDirectory) {
-                        // Map Android ABI names to desktop platform names
-                        val targetDirName = when {
-                            abiDir.name.startsWith("arm64-v8a") -> "arm64"
-                            abiDir.name.startsWith("armeabi-v7a") -> "armv6"
-                            abiDir.name.startsWith("x86_64") -> "linux64"
-                            abiDir.name.startsWith("x86") -> "linux"
-                            abiDir.name.startsWith("linux") -> abiDir.name
-                            else -> abiDir.name
-                        }
+                println("=== Initial test/resources content ===")
+                printDirectoryTree(testResourcesDir, 0)
 
-                        val targetDir = File(testResourcesDir, targetDirName)
-                        targetDir.mkdirs()
+                // Process only x86_64 ABI for linux64
+                val jniDir = File(extractedDir, "jni")
+                if (jniDir.exists()) {
+                    jniDir.listFiles()?.forEach { abiDir ->
+                        if (abiDir.isDirectory && abiDir.name.startsWith("x86_64")) {
+                            // Copy to linux64 directory only
+                            val targetDir = File(testResourcesDir, "linux64")
+                            targetDir.mkdirs()
 
-                        // Copy library files (keeping original names)
-                        abiDir.listFiles()?.forEach { libFile ->
-                            if (libFile.name.endsWith(".so") ||
-                                libFile.name.endsWith(".dll") ||
-                                libFile.name.endsWith(".dylib")) {
-                                copy {
-                                    from(libFile)
-                                    into(targetDir)
+                            // Copy all .so library files from the x86_64 ABI directory
+                            abiDir.listFiles()?.forEach { libFile ->
+                                if (libFile.name.endsWith(".so")) {
+                                    copy {
+                                        from(libFile)
+                                        into(targetDir)
+                                        // Rename to standard name
+                                        rename { "libsodium.so" }
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                println("=== Final test/resources content after extraction ===")
+                printDirectoryTree(testResourcesDir, 0)
+                println("Linux64 directory extracted to: ${testResourcesDir.absolutePath}")
+            }
+        } catch (e: Exception) {
+            println("Warning: Could not extract native libraries: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+}
+
+// Helper function to print directory tree
+fun printDirectoryTree(dir: File, depth: Int) {
+    val indent = "  ".repeat(depth)
+    if (dir.exists()) {
+        println("${indent}${dir.name}/")
+        if (dir.isDirectory) {
+            dir.listFiles()?.sortedBy { it.name }?.forEach { file ->
+                if (file.isDirectory) {
+                    printDirectoryTree(file, depth + 1)
+                } else {
+                    println("${indent}  ${file.name}")
+                }
             }
         }
+    } else {
+        println("${indent}${dir.name} (does not exist)")
     }
 }
 
@@ -93,6 +115,12 @@ tasks.test {
 
     // Set JVM arguments for tests if needed
     jvmArgs("-Xmx2g")
+
+    doFirst {
+        val testResourcesDir = File(sourceSets["test"].resources.srcDirs.first().toString())
+        println("=== Test resources available at runtime ===")
+        printDirectoryTree(testResourcesDir, 0)
+    }
 }
 
 // Configure integration tests with native library support
@@ -110,6 +138,12 @@ tasks.register<Test>("integrationTest") {
     testLogging {
         events("passed", "skipped", "failed")
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+
+    doFirst {
+        val testResourcesDir = File(sourceSets["test"].resources.srcDirs.first().toString())
+        println("=== Integration test resources ===")
+        printDirectoryTree(testResourcesDir, 0)
     }
 }
 

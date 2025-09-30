@@ -28,7 +28,7 @@ public class BaseTest {
 
     @BeforeAll
     public void doBeforeEverything() {
-        libSodium = new LibSodiumJava(new SodiumJava(LibraryLoader.Mode.BUNDLED_ONLY));
+        libSodium = new LibSodiumJava(new SodiumJava(LibraryLoader.Mode.SYSTEM_ONLY));
     }
 
 }

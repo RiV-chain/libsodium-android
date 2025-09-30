@@ -35,7 +35,7 @@ public class SodiumConversionsTest {
 
     @BeforeAll
     public void doBefore() {
-        sodium = new SodiumJava(LibraryLoader.Mode.BUNDLED_ONLY);
+        sodium = new SodiumJava(LibraryLoader.Mode.SYSTEM_ONLY);
     }
     @Test
     public void base64Conversion() {
