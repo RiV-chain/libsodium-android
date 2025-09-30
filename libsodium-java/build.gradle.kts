@@ -49,8 +49,9 @@ val extractAar by tasks.registering {
             if (jniDir.exists()) {
                 jniDir.listFiles()?.forEach { abiDir ->
                     if (abiDir.isDirectory) {
+                        // Map Android ABI names to desktop platform names
                         val targetDirName = when {
-                            abiDir.name.startsWith("arm64") -> "arm64"
+                            abiDir.name.startsWith("arm64-v8a") -> "arm64"
                             abiDir.name.startsWith("armeabi-v7a") -> "armv6"
                             abiDir.name.startsWith("x86_64") -> "linux64"
                             abiDir.name.startsWith("x86") -> "linux"

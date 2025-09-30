@@ -12,5 +12,6 @@ jobs:
           gh_pat: ${{ secrets.MAVEN_PAT }}
           artifact_repo: 'RiV-chain/artifact'
           gradle_file_path: './gradlew'
+          gradle_modules: ':libsodium-java,:libsodium-android'
           java_version: '21'
           distribution: 'temurin'
