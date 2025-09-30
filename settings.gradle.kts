@@ -16,6 +16,7 @@ pluginManagement {
 }
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
         maven {
@@ -26,3 +27,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "libsodium-android"
 include(":libsodium-android")
+include(":libsodium-java")

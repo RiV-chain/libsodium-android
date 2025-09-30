@@ -8,7 +8,7 @@
 
 package org.rivchain.libsodium_android;
 
-import com.goterl.lazysodium.Sodium;
+import org.rivchain.libsodium_java.Sodium;
 import com.sun.jna.Native;
 
 public class SodiumAndroid extends Sodium {

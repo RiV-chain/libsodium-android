@@ -9,7 +9,7 @@
 package org.rivchain.libsodium_android;
 
 import android.util.Base64;
-import com.goterl.lazysodium.utils.Base64Facade;
+import org.rivchain.libsodium_java.utils.Base64Facade;
 
 class Base64Android implements Base64Facade {
 
