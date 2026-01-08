@@ -35,8 +35,8 @@ android {
 
 dependencies {
     grease("org.rivchain:libsodium-java:2.0.0")
-    grease("org.libsodium:libsodium:1.0.21.0@aar")
-    implementation("net.java.dev.jna:jna:5.18.0@aar")
+    grease("org.libsodium:libsodium:1.0.23.0.1@aar")
+    implementation("net.java.dev.jna:jna:5.18.1@aar")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -47,7 +47,7 @@ publishing {
         create<MavenPublication>("gpr") {
             groupId = "org.rivchain"
             artifactId = "libsodium-android"
-            version = "2.0.0"
+            version = "2.1.0"
 
             // Use the release component that we defined above
             afterEvaluate {
